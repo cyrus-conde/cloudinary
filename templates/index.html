@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% block title %} Home Page {% endblock %}
+{% block content %}
+<h1> Simple Student Information System </h1>
+<div class="container">
+	{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				{% for msg in messages %}
+					<p class="text-center">{{msg}}</p>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+	<section class="buttons">
+			<a href="create" class="btn btn-primary">Add New Record</a>
+	</section>
+	<section class="tables">	
+		<select id="show-options" name="show-options" class="form-control">
+			<option value="" selected hidden disabled>Select option you want to show in the table</option>
+			<option value="student">Student</option>
+			<option value="course">Course</option>
+			<option value="college">College</option>
+		</select>
+		
+		
+		
+		<div class="row">
+			<div class="col-4">
+				<select id="search-by-student" name="search-by-student" class="form-control">
+					<option value="" selected hidden disabled>Search by</option>
+					
+					<option value="id">ID Number</option>
+					<option value="firstname">First Name</option>
+					<option value="lastname">Last Name</option>
+					<option value="course">Course</option>
+					<option value="yearLevel">Year Level</option>
+					<option value="gender">Gender</option>
+					
+				</select>
+
+				<select id="search-by-college" name="search-by-college" class="form-control">
+					<option value="" selected hidden disabled>Search by</option>
+					
+					<option value="code">College Code</option>
+					<option value="name">College Name</option>
+					
+				</select>
+
+				<select id="search-by-course" name="search-by-course" class="form-control">
+					<option value="" selected hidden disabled>Search by</option>
+					
+					<option value="code">Course Code</option>
+					<option value="name">Course Name</option>
+					<option value="college">College Code</option>
+					
+				</select>
+			</div>
+			<div class="col-8">
+				<input type="text" name="searchField" id="searchField" class="form-control">
+			</div>
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				var table = '';
+				var column = '';
+				$("#show-options").change(function(){
+					table = $(this).val();
+					column = '';
+					$("input[name=searchField]").val("");
+					load_data('',table,'');
+				});
+				$("#search-by-student").change(function(){
+					column = $(this).val();
+					$("input[name=searchField]").val("");
+					load_data('',table,'');
+				});
+
+				$("#search-by-college").change(function(){
+					column = $(this).val();
+					$("input[name=searchField]").val("");
+					load_data('',table,'');
+				});
+
+				$("#search-by-course").change(function(){
+					column = $(this).val();
+					$("input[name=searchField]").val("");
+					load_data('',table,'');
+				});
+				$("#searchField").on('input', function(){
+					var id = $(this).val();
+					
+					
+					
+					
+					//alert(query);
+
+					load_data(id,table,column);
+					
+				});
+				function load_data(query = '', table='', column=''){
+					
+					$.ajax({
+						url: "/searchField",
+						method: "POST",
+						data: {query:query,table:table,column:column},
+						
+						success:function(data){
+							//
+							
+							$("#show-student").html(data);
+							$("#show-student").append(data.htmlresponse);
+							
+						}
+					});
+				}
+				$("#student-tbl").attr("hidden","true");
+				$("#course-tbl").attr("hidden","true");
+				$("#college-tbl").attr("hidden","true");
+				$("#search-by-student").css("display","none");
+				$("#search-by-college").css("display","none");
+				$("#search-by-course").css("display","none");
+				var searchBy;
+				$("#show-options").change(function(){
+					searchBy = $(this).val();
+					if(searchBy == "student"){
+						$("#search-by-student").css("display","block");
+						$("#search-by-college").css("display","none");
+						$("#search-by-course").css("display","none");
+						$("#student-tbl").removeAttr("hidden");
+						$("#course-tbl").attr("hidden","true");
+						$("#college-tbl").attr("hidden","true");
+					}else if(searchBy == "college"){
+						$("#search-by-student").css("display","none");
+						$("#search-by-college").css("display","block");
+						$("#search-by-course").css("display","none");
+
+						$("#student-tbl").attr("hidden","true");
+						$("#college-tbl").removeAttr("hidden");
+						$("#course-tbl").attr("hidden","true");
+					}else if(searchBy == "course"){
+						$("#search-by-student").css("display","none");
+						$("#search-by-college").css("display","none");
+						$("#search-by-course").css("display","block");
+						$("#student-tbl").attr("hidden","true");
+						$("#college-tbl").attr("hidden","true");
+						$("#course-tbl").removeAttr("hidden");
+					}
+					
+					
+				});
+				
+			});
+		</script>
+		<!--<script type="text/javascript">
+			$(document).ready(function(){
+				$("#student-tbl").css("display","none");
+				$("#course-tbl").css("display","none");
+				$("#college-tbl").css("display","none");
+
+				$("#show-options").on("change",function(){
+					if($(this).val() === "student"){
+						$("#student-tbl").css("display","block");
+						$("#course-tbl").css("display","none");
+						$("#college-tbl").css("display","none");
+					}else if($(this).val() === "course"){
+						$("#course-tbl").css("display","block");
+						$("#student-tbl").css("display","none");
+						$("#college-tbl").css("display","none");
+					}else if($(this).val() === "college"){
+						$("#college-tbl").css("display","block");
+						$("#course-tbl").css("display","none");
+						$("#student-tbl").css("display","none");
+					}
+				});
+			});
+			
+		
+			
+		</script>-->
+		<!-- student table -->
+		
+		<table class="table table-bordered bg-light" >
+			<thead>
+				<tr id="student-tbl" hidden>
+					<th>ID Number</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Course</th>
+					<th>Year Level</th>
+					<th>Gender</th>
+					<th>Action</th>
+				</tr>
+				<tr id="course-tbl" hidden>
+					<th>Course Code</th>
+					<th>Course Name</th>
+					<th>College Code</th>
+					<th>Action</th>
+				</tr>
+				<tr id="college-tbl" hidden>
+					<th>College Code</th>
+					<th>College Name</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody id="show-student">
+				
+			</tbody>
+		</table>
+		
+		
+		<!-- end of student table -->
+		<!-- course table -->
+		
+		<!-- end of college table -->
+	
+</section>
+{% endblock %}

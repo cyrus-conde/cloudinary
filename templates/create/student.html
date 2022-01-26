@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %} Create Student{% endblock %}
+{% block content %}
+<h1> Simple Student Information System </h1>
+<section class="create-type">
+	<div class="container">
+		<h2>CREATE STUDENT HERE</h2>
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				{% for msg in messages %}
+					<p class="text-center">{{msg}}</p>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+		<form action="" method="POST" class="form-group" enctype="multipart/form-data"> 
+			<label for="firstname">First Name: </label>
+			<input type="text" name="firstname" id="firstname" class="form-control" placeholder="Cyrus">
+
+			<label for="lastname">Last Name:</label>
+			<input type="text" name="lastname" id="lastname" class="form-control" placeholder="Conde">
+
+			<label for="course">Course: </label>
+			<select name="course" id="course" class="form-control">
+				<option value="" selected hidden disabled>Select</option>
+				{% for row in data %}
+				<option value={{row[0]}}>{{row[0]}}</option>
+				{% endfor %}
+			</select>
+
+			<label for="yearlevel">Year Level: </label>
+			<input type="text" name="yearLevel" id="yearLevel" class="form-control" placeholder="3rd Year">
+
+			<label for="gender">Gender: </label>
+			<input type="text" name="gender" id="gender" class="form-control" placeholder="MALE">
+			
+			<label for="image">Upload Image: </label>
+			<input type="file" name="image" id="image" class="form-control" accept="image/*">
+
+			<input type="submit" name="create-student" id="create-student" class="btn btn-primary form-control" value="CREATE">
+			<a href="../" class="btn btn-info form-control">Back</a>
+		</form>
+	</div>
+</section>
+{% endblock %}
