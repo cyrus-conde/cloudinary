@@ -22,7 +22,7 @@
 
 			<label for="college-code" class="form-label">college code</label>
 			<select name="college-code" id="college-code" class="form-control">
-				<option value={{row[2]}} selected hidden disabled>{{row[2]}}</option>
+				<option value={{row[2]}} selected hidden>{{row[2]}}</option>
 				{% for college in collegedata %}
 				<option value={{college[0]}}>{{college[0]}}</option>
 				{% endfor %}

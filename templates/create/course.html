@@ -14,13 +14,13 @@
 		{% endwith %}
 		<form action="" method="POST" class="form-group">
 			<label for="course-code" class="form-label">course code</label>
-			<input type="text" class="form-control" id="course-name" name="course-code" placeholder="e.g BSIT">
+			<input type="text" class="form-control" id="course-name" name="course-code" placeholder="e.g BSIT" required>
 
 			<label for="course-name" class="form-label">course name</label>
-			<input type="text" class="form-control" id="course-name" name="course-name" placeholder="e.g Bachelor of Science in Information Technology">
+			<input type="text" class="form-control" id="course-name" name="course-name" placeholder="e.g Bachelor of Science in Information Technology" required>
 
 			<label for="college-code" class="form-label">college code</label>
-			<select name="college-code" id="college-code" class="form-control">
+			<select name="college-code" id="college-code" class="form-control" required>
 				<option value="" selected hidden disabled>Select</option>
 				{% for row in data %}
 				<option value={{row[0]}}>{{row[0]}}</option>
