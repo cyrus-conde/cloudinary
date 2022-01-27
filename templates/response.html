@@ -1,6 +1,7 @@
 {% if table == "student" %}
     {% for row in data %}
     <tr>
+        <td><img src={{row[6]}} width="50" height="50"></td>
         <td>{{row[0]}}</td>
         <td>{{row[1]}}</td>
         <td>{{row[2]}}</td>

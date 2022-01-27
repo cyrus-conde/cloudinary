@@ -66,28 +66,50 @@ def delete(value):
 @student.route("/edit/student/<value>",methods=["POST","GET"])
 def edit(value):
     if request.method == "POST":
+
         firstname = request.form['firstname']
         lastname = request.form['lastname']
         course = request.form['course']
         yearLevel = request.form['yearLevel']
         gender = request.form['gender']
-        #image = request.files['image']
+        
         cur = mysql.connection.cursor()
-        edit_stud_que = "UPDATE student SET firstname=%s,lastname=%s,course=%s,yearLevel=%s,gender=%s WHERE id = %s"
-        #if image and image.filename.split(".")[-1].lower() in ALLOWED_EXTENSIONS:
-            #image_url = cloudinary.uploader.upload(image)
-            #image_url['secure_url'],
-        edit_stud_val = (firstname,lastname,course,yearLevel,gender,value)
-        try:
-            if cur.execute(edit_stud_que,edit_stud_val):
-                mysql.connection.commit()
-                cur.close()
-                flash("Student has been updated")
-            return redirect(url_for("index"))
-        except:
-            flash("Failed to update student")
-            return redirect(url_for("index"))    
-
+        
+        if request.files['image'].filename == '':
+            query = "UPDATE student SET firstname=%s,lastname=%s,course=%s,yearLevel=%s,gender=%s WHERE id=%s"
+            values = (firstname,lastname,course,yearLevel,gender,value)
+            try:
+                if cur.execute(query,values):
+                    mysql.connection.commit()
+                    cur.close()
+                    flash("Student successfully created")
+                    return redirect(url_for("index"))
+            except MySQLdb.IntegrityError:
+                flash("Failed to create student")
+                return redirect(url_for("index"))
+            except:
+                flash("Failed to create student")
+                return redirect(url_for("index"))
+        else:
+            image = request.files['image']
+            query = "UPDATE student SET firstname=%s,lastname=%s,course=%s,yearLevel=%s,gender=%s,image_url=%s WHERE id=%s"
+            
+            if image and image.filename.split(".")[-1].lower() in ALLOWED_EXTENSIONS:
+                image_url = cloudinary.uploader.upload(image)
+                values = (firstname,lastname,course,yearLevel,gender,image_url["secure_url"],value)
+                try:
+                    if cur.execute(query,values):
+                        mysql.connection.commit()
+                        cur.close()
+                        flash("Student successfully created")
+                        return redirect(url_for("index"))
+                except MySQLdb.IntegrityError:
+                    flash("Failed to create student")
+                    return redirect(url_for("index"))
+                except:
+                    flash("Failed to create student")
+                    return redirect(url_for("index"))
+            
     else:
         cur = mysql.connection.cursor()
         cur.execute("SELECT * FROM student WHERE id = %s", (value,))
@@ -102,6 +124,9 @@ def edit(value):
             return render_template("/edit/student.html", results=data,coursedata=coursedata)
         else:
             return "No Data Found"
+    
+
+    
 
 
 @student.route('/create/student/', methods=["POST","GET"])
@@ -112,12 +137,14 @@ def create():
         nnnn = get_nnnn()
         set_idnum(nnnn)
         IDNumber = get_idnum()
+
         firstname = request.form['firstname']
         lastname = request.form['lastname']
         course = request.form['course']
         yearLevel = request.form['yearLevel']
         gender = request.form['gender']
         image = request.files['image']
+
         cur = mysql.connection.cursor()
         query = "INSERT INTO `student`(`id`,`firstname`,`lastname`,`course`,`yearLevel`,`gender`,`image_url`) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         
